@@ -159,14 +159,14 @@
             var controllers     = $ember.get(this, 'controllers'),
                 getController   = Ember.run.bind(this, this._getController),
                 events          = [],
-                forEach         = $ember.EnumerableUtils,
+                forEach         = Array.prototype.forEach,
                 module          = this,
                 respond         = function respond() {
                     var eventData = Array.prototype.slice.call(arguments);
                     module._update.call(module, this, eventData);
                 };
 
-            forEach.forEach(controllers, function controllerIteration(controllerName) {
+            forEach.call(controllers, function controllerIteration(controllerName) {
 
                 // Fetch the controller if it's valid.
                 var controller  = getController(controllerName),
@@ -193,13 +193,11 @@
                             // Push the event so we don't listen for it twice.
                             events.push(eventName);
 
-                            // Check to ensure the event was not previously registered due to a reconnect
-                            if (!(eventName in $ember.get(module, 'socket')._callbacks)) {
+                            // Remove all previous registrations (possible in the case of reconnects)
+                            $ember.get(module, 'socket').removeAllListeners(eventName)
 
-                                // ...And finally we can register the event to listen for it.
-                                $ember.get(module, 'socket').on(eventName, respond.bind(eventName));
-
-                            }
+                            // ...And finally we can register the event to listen for it.
+                            $ember.get(module, 'socket').on(eventName, respond.bind(eventName));
 
                         }
 
@@ -223,12 +221,12 @@
             var controllers             = $ember.get(this, 'controllers'),
                 respondingControllers   = 0,
                 getController           = Ember.run.bind(this, this._getController),
-                forEach                 = $ember.EnumerableUtils.forEach;
+                forEach                 = Array.prototype.forEach;
 
             $ember.run(this, function() {
 
                 // Iterate over each listener controller and emit the event we caught.
-                forEach(controllers, function(controllerName) {
+                forEach.call(controllers, function(controllerName) {
 
                     // Fetch the controller if it's valid.
                     var controller = getController(controllerName);
@@ -256,7 +254,7 @@
                         // Determine if the property is specifying multiple properties to update.
                         if ($ember.isArray(correspondingAction)) {
 
-                            forEach(correspondingAction, function propertyIteration(property, index) {
+                            forEach.call(correspondingAction, function propertyIteration(property, index) {
 
                                 // Update each property included in the array of properties.
                                 $ember.set(controller, property, eventData[index]);

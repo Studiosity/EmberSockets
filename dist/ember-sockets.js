@@ -121,7 +121,7 @@
          * @return {void}
          */
         error: function(errorData) {
-            if (typeof window.airbrake !== 'undefined' && typeof window.airbrake.notify  !== 'undefined') {
+            if (typeof window.airbrake === 'object' && typeof window.airbrake.notify  === 'function') {
                 if (typeof errorData !== "string" && !(errorData instanceof Error)) {
                     errorData = JSON.stringify(errorData);
                 }

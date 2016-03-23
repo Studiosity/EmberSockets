@@ -121,11 +121,28 @@
          * @return {void}
          */
         error: function(errorData) {
+            if (typeof window.airbrake === 'object' && typeof window.airbrake.notify  === 'function') {
+                if (typeof errorData !== "string" && !(errorData instanceof Error)) {
+                    errorData = JSON.stringify(errorData);
+                }
+                if (errorData instanceof Error) {
+                    if (typeof errorData.type !== "undefined") {
+                        errorData.message =  errorData.type+ ": " + errorData.message;
+                    }
+                    if (typeof errorData.description !== "undefined") {
+                        errorData.message =  errorData.message + " (" + errorData.description + ")";
+                    }
+                }
 
-            // Throw an exception if an error occurs.
-            $window.console.error(errorData);
-            throw 'EmberSockets: An error occurred.';
-
+                window.airbrake.notify({
+                    error: errorData,
+                    context:  { component: 'EmberSockets' }
+                });
+            } else {
+                // Throw an exception if an error occurs.
+                console.error(errorData);
+                throw 'EmberSockets: An error occurred.';
+            }
         },
 
         /**

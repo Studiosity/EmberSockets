@@ -123,8 +123,7 @@
         error: function(errorData) {
 
             // Throw an exception if an error occurs.
-            $window.console.error(errorData);
-            throw 'EmberSockets: An error occurred.';
+            throw JSON.stringify({error:'EmberSockets: An error occurred.', details: errorData});
 
         },
 

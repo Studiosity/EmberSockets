@@ -93,8 +93,8 @@
                 }
 
                 // Use the host to compile the connect string.
-                server = !port ? `${scheme}://${host}/${path}`
-                               : `${scheme}://${host}:${port}/${path}`;
+                server = !port ? '%@://%@/%@'.fmt(scheme, host, path)
+                               : '%@://%@:%@/%@'.fmt(scheme, host, port, path);
 
             })(this);
 
@@ -308,7 +308,7 @@
 
             // Format the `name` to match what the lookup container is expecting, and then
             // we'll locate the controller from the `container`.
-            name = `controller:${name}`;
+            name = 'controller:%@'.fmt(name);
             var controller = Ember.getOwner(this).lookup(name);
 
             if (!controller || (this.NAMESPACE in controller === false)) {

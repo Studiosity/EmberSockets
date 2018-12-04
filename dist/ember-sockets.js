@@ -93,8 +93,8 @@
                 }
 
                 // Use the host to compile the connect string.
-                server = !port ? '%@://%@/%@'.fmt(scheme, host, path)
-                               : '%@://%@:%@/%@'.fmt(scheme, host, port, path);
+                server = !port ? (scheme + '://' + host + '/' + path)
+                               : (scheme + '://' + host + ':' + port + '/' + path);
 
             })(this);
 
@@ -309,7 +309,7 @@
 
             // Format the `name` to match what the lookup container is expecting, and then
             // we'll locate the controller from the `container`.
-            name = 'controller:%@'.fmt(name);
+            name = 'controller:' + name;
             var controller = this.container.lookup(name);
 
             if (!controller || (this.NAMESPACE in controller === false)) {

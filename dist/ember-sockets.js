@@ -93,8 +93,8 @@
                 }
 
                 // Use the host to compile the connect string.
-                server = !port ? (scheme + '://' + host + '/' + path)
-                               : (scheme + '://' + host + ':' + port + '/' + path);
+                server = !port ? '%@://%@/%@'.fmt(scheme, host, path)
+                               : '%@://%@:%@/%@'.fmt(scheme, host, port, path);
 
             })(this);
 
@@ -121,22 +121,22 @@
          * @return {void}
          */
         error: function(errorData) {
-            if (typeof window.airbrake === 'object' && typeof window.airbrake.notify  === 'function') {
+            if (typeof window.Honeybadger === 'object' && typeof window.Honeybadger.notify  === 'function') {
                 if (typeof errorData !== "string" && !(errorData instanceof Error)) {
                     errorData = JSON.stringify(errorData);
                 }
                 if (errorData instanceof Error) {
                     if (typeof errorData.type !== "undefined") {
-                        errorData.message =  errorData.type+ ": " + errorData.message;
+                        errorData.message = errorData.type+ ": " + errorData.message;
                     }
                     if (typeof errorData.description !== "undefined") {
-                        errorData.message =  errorData.message + " (" + errorData.description + ")";
+                        errorData.message = errorData.message + " (" + errorData.description + ")";
                     }
                 }
 
-                window.airbrake.notify({
+                Honeybadger.notify({
                     error: errorData,
-                    context:  { component: 'EmberSockets' }
+                    context: { component: 'EmberSockets' }
                 });
             } else {
                 // Throw an exception if an error occurs.
@@ -308,7 +308,7 @@
 
             // Format the `name` to match what the lookup container is expecting, and then
             // we'll locate the controller from the `container`.
-            name = 'controller:' + name;
+            name = 'controller:%@'.fmt(name);
             var controller = Ember.getOwner(this).lookup(name);
 
             if (!controller || (this.NAMESPACE in controller === false)) {
